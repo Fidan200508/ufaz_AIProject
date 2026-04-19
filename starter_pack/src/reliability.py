@@ -20,7 +20,7 @@ _SP = os.path.dirname(_SRC)
 sys.path.extend([_SRC, os.path.join(_SRC, "models"), os.path.join(_SRC, "utils")])
 
 from data_utils import load_digits
-from softmax_regression import SoftmaxRegression
+from model.softmax_regression import SoftmaxRegression
 from train_nn import train_nn as train_model_nn
 
 # Directory setup
@@ -159,13 +159,13 @@ def main():
     # 5. Generate Figures
     plot_reliability_diagrams(get_reliability_table(conf_sm, corr_sm),
                               get_reliability_table(conf_nn, corr_nn),
-                              os.path.join(FIGURES_DIR, "track_b_reliability_both.png"))
+                              os.path.join(FIGURES_DIR, "reliability_both.png"))
 
     plot_uncertainty_dist(conf_sm, conf_nn, corr_sm, corr_nn, 
-                          os.path.join(FIGURES_DIR, "track_b_confidence_correctness.png"), "Confidence")
+                          os.path.join(FIGURES_DIR, "confidence_correctness.png"), "Confidence")
     
     plot_uncertainty_dist(ent_sm, ent_nn, corr_sm, corr_nn, 
-                          os.path.join(FIGURES_DIR, "track_b_entropy_correctness.png"), "Entropy")
+                          os.path.join(FIGURES_DIR, "entropy_correctness.png"), "Entropy")
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 
 from train_nn import train_nn
+import os
 
 
 def load_digits_data():
@@ -10,8 +11,18 @@ def load_digits_data():
     Load digits dataset and fixed train/val/test split.
     Assumes this script is run from the project root or the file paths are valid.
     """
-    data = np.load("starter_pack/data/digits_data.npz")
-    split = np.load("starter_pack/data/digits_split_indices.npz")
+    # Get the directory where this script (run_analysis.py or similar) is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Move up one level if this script is inside 'src' to reach the project root
+    project_root = os.path.dirname(base_dir)
+
+    # Construct absolute paths
+    data_path = os.path.join(project_root, "data", "digits_data.npz")
+    split_path = os.path.join(project_root, "data", "digits_split_indices.npz")
+
+    data = np.load(data_path)
+    split = np.load(split_path)
 
     X = data["X"]
     y = data["y"]
@@ -135,13 +146,18 @@ def main():
         print(f"Test  Loss: {test_metrics['loss']:.4f} | Test  Acc: {test_metrics['accuracy']:.4f}")
         print()
 
-    # Save results
-    results_dir = Path("starter_pack/results")
-    results_dir.mkdir(parents=True, exist_ok=True)
+        # 1. Get the absolute path to the project root
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(base_dir)
 
-    out_path = results_dir / "digits_optimizer_study.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
+        # 2. Point to the top-level starter_pack/results folder
+        results_dir = Path(project_root) / "results"
+        results_dir.mkdir(parents=True, exist_ok=True)
+
+        out_path = results_dir / "digits_optimizer_study.json"
+
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2)
 
     print("=" * 70)
     print("FINAL SUMMARY")
