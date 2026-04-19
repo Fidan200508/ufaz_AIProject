@@ -7,7 +7,7 @@ import matplotlib.colors as mcolors
 # Ensure project root is in the path for internal imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from models.softmax_regression import SoftmaxRegression
+from model.softmax_regression import SoftmaxRegression
 from utils.data_utils import load_synthetic, standardize
 
 # Global Visualization Configuration
