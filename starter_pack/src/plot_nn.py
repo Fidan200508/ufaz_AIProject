@@ -2,7 +2,7 @@
 Reliability Diagram for One-Hidden-Layer Neural Network
 
 This script trains the final NN (hidden=32, Adam) and generates the Reliability Diagram
-for Track B, exactly matching the style of the Softmax version.
+for Tsecond part, exactly matching the style of the Softmax version.
 """
 
 import os
@@ -39,12 +39,12 @@ os.makedirs(FIGURES_DIR, exist_ok=True)
 # ============================================================
 # Main Function
 # ============================================================
-def run_track_b_nn():
-    print("=== Running Track B for Neural Network ===")
+def run_nn():
+    print("=== Running Neural Network ===")
 
     # 1. Load data (same fixed splits as all other scripts)
-    data_path = os.path.join(BASE_DIR, "data", "digits_data.npz")
-    split_path = os.path.join(BASE_DIR, "data", "digits_split_indices.npz")
+    data_path = os.path.join(BASE_DIR, "digit-recognition-system-app", "data", "digits_data.npz")
+    split_path = os.path.join(BASE_DIR, "digit-recognition-system-app", "data", "digits_split_indices.npz")
     dataset = load_digits(data_path, split_path)
 
     # 2. Train final NN (exact same config as your repeated seeds)
@@ -120,4 +120,4 @@ def run_track_b_nn():
 
 
 if __name__ == "__main__":
-    run_track_b_nn()
+    run_nn()
