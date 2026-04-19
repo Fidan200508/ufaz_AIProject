@@ -2,7 +2,7 @@
   "softmax": {
     "best_epoch": 200,
     "test_accuracy": 0.9375,
-    "test_loss": 0.2699152584141133
+    "test_loss": 0.26987394551220395
   },
   "nn": {
     "best_epoch": 200,
