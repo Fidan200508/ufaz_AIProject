@@ -104,7 +104,7 @@ def run_track_b_nn():
         zorder=2
     )
 
-    plt.title("Reliability Diagram - Track B (One-Hidden-Layer NN)", pad=15)
+    plt.title("Reliability Diagram - (One-Hidden-Layer NN)", pad=15)
     plt.xlabel("Confidence (Predicted Probability)")
     plt.ylabel("Accuracy (Empirical Frequency)")
     plt.xlim(0, 1.05)
@@ -112,12 +112,11 @@ def run_track_b_nn():
     plt.legend(loc="upper left")
     plt.tight_layout()
 
-    save_path = os.path.join(FIGURES_DIR, "track_b_reliability_nn.png")
+    save_path = os.path.join(FIGURES_DIR, "reliability_nn.png")
     plt.savefig(save_path)
     plt.close()
 
-    print(f"✅ Track B plot for Neural Network saved:\n   {save_path}")
-    print("   (You can now add this figure to your LaTeX report)")
+    print(f"Plot for Neural Network saved:\n   {save_path}")
 
 
 if __name__ == "__main__":

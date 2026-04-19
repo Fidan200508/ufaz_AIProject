@@ -2,9 +2,10 @@ import json
 from pathlib import Path
 
 import numpy as np
+import os
 
 from train_nn import train_nn
-from models.softmax_regression import SoftmaxRegression
+from model.softmax_regression import SoftmaxRegression
 
 
 def one_hot(y, num_classes):
@@ -15,8 +16,18 @@ def one_hot(y, num_classes):
 
 
 def load_digits():
-    data = np.load("starter_pack/data/digits_data.npz")
-    split = np.load("starter_pack/data/digits_split_indices.npz")
+    # Get the directory where this script (run_analysis.py or similar) is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Move up one level if this script is inside 'src' to reach the project root
+    project_root = os.path.dirname(base_dir)
+
+    # Construct absolute paths
+    data_path = os.path.join(project_root, "data", "digits_data.npz")
+    split_path = os.path.join(project_root, "data", "digits_split_indices.npz")
+
+    data = np.load(data_path)
+    split = np.load(split_path)
 
     X = np.asarray(data["X"], dtype=np.float64)
     y = np.asarray(data["y"], dtype=np.int64)
@@ -117,13 +128,13 @@ def main():
     Y_val = one_hot(y_val, n_classes)
 
     # ---------------------------
-    # Softmax
+    # Softmax - Fixed parameter and method names
     # ---------------------------
     softmax_model = SoftmaxRegression(
         n_features=n_features,
         n_classes=n_classes,
         lr=0.05,
-        l2_lambda=1e-4,
+        reg=1e-4,  # Changed from l2_lambda to reg
         optimizer="sgd",
         seed=42,
     )
@@ -136,8 +147,8 @@ def main():
         batch_size=64,
         verbose=False,
     )
-    softmax_model.restore_best_checkpoint()
-    softmax_probs = softmax_model.predict_proba(X_test)
+    softmax_model.load_best_weights() # Changed from restore_best_checkpoint
+    softmax_probs = softmax_model.forward_pass(X_test) # Changed from predict_proba
 
     # ---------------------------
     # NN
@@ -166,18 +177,20 @@ def main():
         "nn": analyze_predictions(nn_probs, y_test),
     }
 
-    out_dir = Path("starter_pack/results")
+    # Use robust pathing for results
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
+    out_dir = Path(project_root) / "results"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    out_path = out_dir / "track_b_analysis.json"
+    out_path = out_dir / "analysis.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
     print("=" * 70)
-    print("TRACK B ANALYSIS COMPLETE")
+    print("ANALYSIS COMPLETE")
     print("=" * 70)
     print(f"Saved results to: {out_path}")
-
 
 if __name__ == "__main__":
     main()
