@@ -1,9 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
+from pathlib import Path
 
-data = np.load('starter_pack/data/digits_data.npz')
-indices = np.load('starter_pack/data/digits_split_indices.npz')
+BASE_DIR = Path(__file__).resolve().parents[2]  # points to starter_pack
+
+data = np.load(BASE_DIR / 'data/digits_data.npz')
+indices = np.load(BASE_DIR / 'data/digits_split_indices.npz')
 
 X_train, y_train = data['X'][indices['train_idx']], data['y'][indices['train_idx']]
 X_val, y_val = data['X'][indices['val_idx']], data['y'][indices['val_idx']]
