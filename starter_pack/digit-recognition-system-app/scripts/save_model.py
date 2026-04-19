@@ -1,14 +1,19 @@
+import sys
 import pickle
-import numpy as np
 from pathlib import Path
-from starter_pack.train_nn import train_nn
+import numpy as np
+
+# Fix import paths
+root = Path(__file__).resolve().parents[3]  # ufaz_AIProject
+sys.path.insert(0, str(root))
+sys.path.insert(0, str(root / "starter_pack" / "src"))  # so nn_model is found
+
+from starter_pack.src.train_nn import train_nn
 
 # -----------------------
 # Load data
 # -----------------------
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parents[1]  # points to digit-recognition-system-app
 
 data = np.load(BASE_DIR / "data/digits_data.npz")
 split = np.load(BASE_DIR / "data/digits_split_indices.npz")
@@ -52,7 +57,10 @@ weights = {
     "b2": model.b2,
 }
 
-with open("models/digits_model.pkl", "wb") as f:
+save_path = BASE_DIR / "models" / "digits_model.pkl"
+save_path.parent.mkdir(parents=True, exist_ok=True)
+
+with open(save_path, "wb") as f:
     pickle.dump(weights, f)
 
-print("✅ Model saved as digits_model.pkl")
+print(" Model saved as digits_model.pkl")
