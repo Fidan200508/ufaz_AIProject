@@ -1,7 +1,7 @@
 import json
 import sys
 from pathlib import Path
-
+import os
 import numpy as np
 
 # make sibling imports robust
@@ -10,7 +10,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.append(str(SRC_DIR))
 
 from train_nn import train_nn
-from softmax_regression import SoftmaxRegression
+from model.softmax_regression import SoftmaxRegression
 
 
 def one_hot(y, num_classes):
@@ -21,8 +21,15 @@ def one_hot(y, num_classes):
 
 
 def load_digits():
-    data = np.load("starter_pack/data/digits_data.npz")
-    split = np.load("starter_pack/data/digits_split_indices.npz")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
+
+    # Building absolute paths to the data files
+    data_path = os.path.join(project_root, "data", "digits_data.npz")
+    split_path = os.path.join(project_root, "data", "digits_split_indices.npz")
+
+    data = np.load(data_path)
+    split = np.load(split_path)
 
     X = np.asarray(data["X"], dtype=np.float64)
     y = np.asarray(data["y"], dtype=np.int64)
@@ -150,15 +157,18 @@ def main():
             "test_loss": nn_test["loss"],
         },
     }
+    # 1. Get the absolute path to the project root
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
 
-    out_dir = Path("starter_pack/results")
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # 2. Point to the top-level starter_pack/results folder
+    results_dir = Path(project_root) / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
 
-    out_path = out_dir / "digits_comparison.json"
+    out_path = results_dir / "digits_comparison.json"
+
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
-
-    print(f"\nSaved results to: {out_path}")
 
 
 if __name__ == "__main__":

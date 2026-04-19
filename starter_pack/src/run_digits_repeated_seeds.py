@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -7,8 +8,18 @@ from train_nn import train_nn
 
 
 def load_digits():
-    data = np.load("starter_pack/data/digits_data.npz")
-    split = np.load("starter_pack/data/digits_split_indices.npz")
+    # Get the directory where this script (run_analysis.py or similar) is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Move up one level if this script is inside 'src' to reach the project root
+    project_root = os.path.dirname(base_dir)
+
+    # Construct absolute paths
+    data_path = os.path.join(project_root, "data", "digits_data.npz")
+    split_path = os.path.join(project_root, "data", "digits_split_indices.npz")
+
+    data = np.load(data_path)
+    split = np.load(split_path)
 
     X = data["X"]
     y = data["y"]
@@ -125,10 +136,16 @@ def main():
         "ci95_test_loss": ci_loss,
     }
 
-    results_dir = Path("starter_pack/results")
+    # 1. Get the absolute path to the project root
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
+
+    # 2. Point to the top-level starter_pack/results folder
+    results_dir = Path(project_root) / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
 
     out_path = results_dir / "digits_repeated_seeds_nn.json"
+
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 

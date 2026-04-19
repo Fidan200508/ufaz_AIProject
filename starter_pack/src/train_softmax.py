@@ -15,7 +15,7 @@ import numpy as np
 # Ensure the project root is in the path for internal imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from models.softmax_regression import SoftmaxRegression, repeated_seed_evaluation
+from model.softmax_regression import SoftmaxRegression, repeated_seed_evaluation
 from utils.data_utils import load_digits
 from utils.metrics import accuracy
 # ============================================================

@@ -3,24 +3,31 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-
+import os
 from train_nn import train_nn
 
 
 def load_moons():
-    data = np.load("starter_pack/data/moons.npz")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
 
-    X_train = data["X_train"]
-    y_train = data["y_train"]
+    # Paths to the data and the splits
+    data_path = os.path.join(project_root, "data", "digits_data.npz")
+    split_path = os.path.join(project_root, "data", "digits_split_indices.npz")
 
-    X_val = data["X_val"]
-    y_val = data["y_val"]
+    data = np.load(data_path)
+    split = np.load(split_path)
 
-    X_test = data["X_test"]
-    y_test = data["y_test"]
+    # Use the keys we saw in the print statement: 'X' and 'y'
+    X = data["X"]
+    y = data["y"]
+
+    # Use the indices to create the splits
+    X_train, y_train = X[split["train_idx"]], y[split["train_idx"]]
+    X_val, y_val = X[split["val_idx"]], y[split["val_idx"]]
+    X_test, y_test = X[split["test_idx"]], y[split["test_idx"]]
 
     return X_train, y_train, X_val, y_val, X_test, y_test
-
 
 def make_train_val_test_split(X, y, train_frac=0.6, val_frac=0.2, seed=42):
     rng = np.random.default_rng(seed)
@@ -118,9 +125,9 @@ def main():
             y_train=y_train,
             X_val=X_val,
             y_val=y_val,
-            input_dim=2,
+            input_dim=X_train.shape[1],
             hidden_dim=hidden_dim,
-            output_dim=2,
+            output_dim=len(np.unique(y_train)),
             optimizer="adam",
             lr=0.01,
             reg_lambda=0,
@@ -135,18 +142,22 @@ def main():
         val_metrics = evaluate(model, X_val, y_val)
         test_metrics = evaluate(model, X_test, y_test)
 
-        plot_decision_boundary(
-            model=model,
-            X=X_all,
-            y=y_all,
-            title=f"Moons Decision Boundary (hidden={hidden_dim})",
-            save_path=figures_dir / f"moons_boundary_{hidden_dim}.png",
-        )
+        # FIX: Only attempt to plot if the data is 2D (like the Moons dataset)
+        if X_train.shape[1] == 2:
+            plot_decision_boundary(
+                model=model,
+                X=X_all,
+                y=y_all,
+                title=f"Decision Boundary (hidden={hidden_dim})",
+                save_path=figures_dir / f"moons_boundary_{hidden_dim}.png",
+            )
+        else:
+            print(f"Skipping decision boundary plot: Dataset has {X_train.shape[1]} features, but plot needs 2.")
 
         plot_training_curves(
             history=history,
-            title=f"Moons Training Curves (hidden={hidden_dim})",
-            save_path=figures_dir / f"moons_curves_{hidden_dim}.png",
+            title=f"Training Curves (hidden={hidden_dim})",
+            save_path=figures_dir / f"training_curves_{hidden_dim}.png",
         )
 
         row = {
@@ -166,10 +177,20 @@ def main():
         print(f"Val   Loss: {val_metrics['loss']:.4f} | Val   Acc: {val_metrics['accuracy']:.4f}")
         print(f"Test  Loss: {test_metrics['loss']:.4f} | Test  Acc: {test_metrics['accuracy']:.4f}\n")
 
+    # 1. Get the absolute path to the project root
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(base_dir)
+
+    # 2. Point to the top-level starter_pack/results folder
+    results_dir = Path(project_root) / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+
     out_path = results_dir / "moons_capacity_ablation.json"
+
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
+    out_path = results_dir / "moons_capacity_ablation.json"
     print("=" * 70)
     print("FINAL SUMMARY")
     print("=" * 70)
