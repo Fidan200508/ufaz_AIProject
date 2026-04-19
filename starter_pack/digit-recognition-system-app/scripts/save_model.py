@@ -52,7 +52,7 @@ weights = {
     "b2": model.b2,
 }
 
-with open("digits_model.pkl", "wb") as f:
+with open("models/digits_model.pkl", "wb") as f:
     pickle.dump(weights, f)
 
 print("✅ Model saved as digits_model.pkl")
